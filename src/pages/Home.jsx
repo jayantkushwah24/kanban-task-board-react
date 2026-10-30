@@ -1,8 +1,20 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AddTask from "../components/AddTask";
+import TaskCard from "../components/TaskCard";
 
 const Home = () => {
   const [showAddTaskForm, setShowAddTaskForm] = useState(false);
+  const [allTasks, setAllTasks] = useState([]);
+  console.log(allTasks);
+
+  function getAllTasks() {
+    const data = JSON.parse(localStorage.getItem("all_tasks")) || [];
+    setAllTasks(data);
+  }
+
+  useEffect(() => {
+    getAllTasks();
+  }, [showAddTaskForm]);
 
   return (
     <div>
@@ -10,7 +22,7 @@ const Home = () => {
         <button onClick={() => setShowAddTaskForm(false)}>Back</button>
       )}
       {showAddTaskForm === true ? (
-        <AddTask />
+        <AddTask allTasks={allTasks} setShowAddTaskForm={setShowAddTaskForm} />
       ) : (
         <button onClick={() => setShowAddTaskForm(true)}>Add Task</button>
       )}
@@ -25,9 +37,27 @@ const Home = () => {
         </thead>
         <tbody>
           <tr>
-            <td>gym</td>
-            <td>coding</td>
-            <td>frontend</td>
+            <td>
+              <TaskCard
+                allTasks={allTasks}
+                setAllTasks={setAllTasks}
+                status="todo"
+              />
+            </td>
+            <td>
+              <TaskCard
+                allTasks={allTasks}
+                setAllTasks={setAllTasks}
+                status="in-progress"
+              />
+            </td>
+            <td>
+              <TaskCard
+                allTasks={allTasks}
+                setAllTasks={setAllTasks}
+                status="completed"
+              />
+            </td>
           </tr>
         </tbody>
       </table>
