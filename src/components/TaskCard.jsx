@@ -2,13 +2,8 @@ import React, { useContext } from "react";
 import { TasksContext } from "../context/TaskContext";
 
 const TaskCard = ({ status }) => {
-  const { allTasks, setAllTasks, handleUpdateTask } = useContext(TasksContext);
-
-  const handleDeleteTask = (id) => {
-    const data = allTasks.filter((task) => task.id !== id);
-    setAllTasks(data);
-    localStorage.setItem("all_tasks", JSON.stringify(data));
-  };
+  const { allTasks, handleDeleteTask, handleUpdateTask } =
+    useContext(TasksContext);
 
   return (
     <div>

@@ -3,8 +3,16 @@ import { useForm } from "react-hook-form";
 import { TasksContext } from "../context/TaskContext";
 
 const AddTask = () => {
-  const { register, handleSubmit } = useForm();
-  const { handleFormSubmit } = useContext(TasksContext);
+  const { handleFormSubmit, taskToEdit } = useContext(TasksContext);
+  const { register, handleSubmit } = useForm({
+    defaultValues: taskToEdit ?? {
+      title: "",
+      description: "",
+      priority: "expedite",
+      status: "todo",
+      due_date: "",
+    },
+  });
 
   return (
     <div>
@@ -16,7 +24,7 @@ const AddTask = () => {
           name="title"
           placeholder="Enter title"
         />
-        <label for="description">Description:</label>
+        <label htmlFor="description">Description:</label>
         <textarea
           {...register("description")}
           id="description"
@@ -25,22 +33,24 @@ const AddTask = () => {
           cols="50"
           placeholder="Enter your description here..."
         ></textarea>
-        <label htmlFor="priority">Priority: </label>
+        <label htmlFor="priority" id="priority">
+          Priority:{" "}
+        </label>
         <select {...register("priority")} name="priority" id="">
           <option value="expedite">Expedite</option>
-          <option value="expedite">Normal Priority</option>
-          <option value="expedite">Not Critical</option>
-          <option value="expedite">Low Priority</option>
+          <option value="normal">Normal Priority</option>
+          <option value="not-critical">Not Critical</option>
+          <option value="low">Low Priority</option>
         </select>
         <label htmlFor="status">Status: </label>
-        <select {...register("status")} name="status" id="">
+        <select {...register("status")} name="status" id="status">
           <option value="todo">Todo</option>
           <option value="in-progress">In Progress</option>
           <option value="completed">Completed</option>
         </select>
-        <label htmlFor="due">Due Date: </label>
-        <input {...register("due_date")} type="date" />
-        <button type="submit">Add Task</button>
+        <label htmlFor="due_date">Due Date: </label>
+        <input {...register("due_date")} type="date" id="due_date" />
+        <button type="submit">{taskToEdit ? "Edit Task" : "Add Task"}</button>
       </form>
     </div>
   );

@@ -4,27 +4,19 @@ import TaskCard from "../components/TaskCard";
 import { TasksContext } from "../context/TaskContext";
 
 const Home = () => {
-  const { allTasks, setAllTasks, showAddTaskForm, setShowAddTaskForm } =
+  const { showAddTaskForm, handleStartAddTask, handleCancelForm } =
     useContext(TasksContext);
-
-  function getAllTasks() {
-    const data = JSON.parse(localStorage.getItem("all_tasks")) || [];
-    setAllTasks(data);
-  }
-
-  useEffect(() => {
-    getAllTasks();
-  }, []);
 
   return (
     <div>
+      <h1>Kanban Task Board</h1>
       {showAddTaskForm === true && (
-        <button onClick={() => setShowAddTaskForm(false)}>Back</button>
+        <button onClick={() => handleCancelForm()}>Back</button>
       )}
       {showAddTaskForm === true ? (
         <AddTask />
       ) : (
-        <button onClick={() => setShowAddTaskForm(true)}>Add Task</button>
+        <button onClick={() => handleStartAddTask()}>Add Task</button>
       )}
 
       <table>
