@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import AddTask from "../components/AddTask";
 import TaskCard from "../components/TaskCard";
+import { TasksContext } from "../context/TaskContext";
 
 const Home = () => {
-  const [showAddTaskForm, setShowAddTaskForm] = useState(false);
-  const [allTasks, setAllTasks] = useState([]);
-  console.log(allTasks);
+  const { allTasks, setAllTasks, showAddTaskForm, setShowAddTaskForm } =
+    useContext(TasksContext);
 
   function getAllTasks() {
     const data = JSON.parse(localStorage.getItem("all_tasks")) || [];
@@ -14,7 +14,7 @@ const Home = () => {
 
   useEffect(() => {
     getAllTasks();
-  }, [showAddTaskForm]);
+  }, []);
 
   return (
     <div>
@@ -22,7 +22,7 @@ const Home = () => {
         <button onClick={() => setShowAddTaskForm(false)}>Back</button>
       )}
       {showAddTaskForm === true ? (
-        <AddTask allTasks={allTasks} setShowAddTaskForm={setShowAddTaskForm} />
+        <AddTask />
       ) : (
         <button onClick={() => setShowAddTaskForm(true)}>Add Task</button>
       )}
@@ -38,25 +38,13 @@ const Home = () => {
         <tbody>
           <tr>
             <td>
-              <TaskCard
-                allTasks={allTasks}
-                setAllTasks={setAllTasks}
-                status="todo"
-              />
+              <TaskCard status="todo" />
             </td>
             <td>
-              <TaskCard
-                allTasks={allTasks}
-                setAllTasks={setAllTasks}
-                status="in-progress"
-              />
+              <TaskCard status="in-progress" />
             </td>
             <td>
-              <TaskCard
-                allTasks={allTasks}
-                setAllTasks={setAllTasks}
-                status="completed"
-              />
+              <TaskCard status="completed" />
             </td>
           </tr>
         </tbody>

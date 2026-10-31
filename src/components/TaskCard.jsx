@@ -1,6 +1,9 @@
-import React from "react";
+import React, { useContext } from "react";
+import { TasksContext } from "../context/TaskContext";
 
-const TaskCard = ({ allTasks, status, setAllTasks }) => {
+const TaskCard = ({ status }) => {
+  const { allTasks, setAllTasks, handleUpdateTask } = useContext(TasksContext);
+
   const handleDeleteTask = (id) => {
     const data = allTasks.filter((task) => task.id !== id);
     setAllTasks(data);
@@ -20,7 +23,9 @@ const TaskCard = ({ allTasks, status, setAllTasks }) => {
                 <p>Status: {task.status}</p>
                 <p>Due Date: {task.due_date}</p>
                 <p>Priority: {task.priority}</p>
-                <button>Update</button>
+                <button onClick={() => handleUpdateTask(task.id)}>
+                  Update
+                </button>
                 <button onClick={() => handleDeleteTask(task.id)}>
                   Delete
                 </button>

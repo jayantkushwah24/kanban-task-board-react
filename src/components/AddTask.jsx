@@ -1,33 +1,10 @@
-// if (status === "todo") {
-//       localStorage.setItem("todo_tasks", JSON.stringify([...allTasks, obj]));
-//     } else if (status === "in-progress") {
-//       localStorage.setItem("in_progress_tasks", JSON.stringify([...allTasks, obj]));
-//     } else if (status === "completed") {
-//       localStorage.setItem("completed_tasks", JSON.stringify([...allTasks, obj]));
-//     }
-
+import { useContext } from "react";
 import { useForm } from "react-hook-form";
+import { TasksContext } from "../context/TaskContext";
 
-const AddTask = ({ allTasks, setShowAddTaskForm }) => {
-  const { register, handleSubmit, reset } = useForm();
-
-  const handleFormSubmit = (data) => {
-    const { title, description, priority, status, due_date } = data;
-
-    const obj = {
-      id: crypto.randomUUID(),
-      title,
-      description,
-      priority,
-      status,
-      due_date,
-    };
-
-    localStorage.setItem("all_tasks", JSON.stringify([...allTasks, obj]));
-
-    reset();
-    setShowAddTaskForm(false);
-  };
+const AddTask = () => {
+  const { register, handleSubmit } = useForm();
+  const { handleFormSubmit } = useContext(TasksContext);
 
   return (
     <div>
