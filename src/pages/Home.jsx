@@ -1,11 +1,17 @@
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import AddTask from "../components/AddTask";
 import TaskCard from "../components/TaskCard";
 import { TasksContext } from "../context/TaskContext";
 
 const Home = () => {
-  const { showAddTaskForm, handleStartAddTask, handleCancelForm, handleDrop } =
-    useContext(TasksContext);
+  const {
+    showAddTaskForm,
+    handleStartAddTask,
+    handleCancelForm,
+    handleDrop,
+    handleSearchByTitle,
+    handleFilterByPriority,
+  } = useContext(TasksContext);
 
   return (
     <div>
@@ -18,6 +24,26 @@ const Home = () => {
       ) : (
         <button onClick={() => handleStartAddTask()}>Add Task</button>
       )}
+
+      <div>
+        <input
+          type="text"
+          placeholder="search by title..."
+          onChange={(e) => handleSearchByTitle(e.target.value)}
+        />
+      </div>
+      <label htmlFor="priority">Filter by priority: </label>
+      <select
+        name="priority"
+        id="priority"
+        onChange={(e) => handleFilterByPriority(e.target.value)}
+      >
+        <option value="">All Tasks</option>
+        <option value="urgent">Urgent</option>
+        <option value="normal">Normal Priority</option>
+        <option value="not-critical">Not Critical</option>
+        <option value="low">Low Priority</option>
+      </select>
 
       <table>
         <thead>

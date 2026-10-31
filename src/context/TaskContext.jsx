@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useState } from "react";
 
 export const TasksContext = createContext();
 
@@ -9,6 +9,8 @@ function TasksProvider({ children }) {
   const [showAddTaskForm, setShowAddTaskForm] = useState(false);
   const [taskToEdit, setTaskToEdit] = useState(null);
   const [dragTaskId, setDragTaskId] = useState(null);
+  const [searchText, setSearchText] = useState("");
+  const [filterValue, setFilterValue] = useState("");
 
   const handleFormSubmit = (data) => {
     const updatedTasks = taskToEdit
@@ -51,6 +53,10 @@ function TasksProvider({ children }) {
     setDragTaskId(id);
   };
 
+  const handleSearchByTitle = (input) => {
+    setSearchText(input);
+  };
+
   const handleDrop = (newStatus) => {
     if (!dragTaskId) return;
 
@@ -60,6 +66,7 @@ function TasksProvider({ children }) {
 
     setAllTasks(updatedTasks);
     localStorage.setItem("all_tasks", JSON.stringify(updatedTasks));
+    setDragTaskId(null);
   };
 
   const handleChangeStatus = (id, newStatus) => {
@@ -69,6 +76,10 @@ function TasksProvider({ children }) {
     );
     setAllTasks(updatedTasks);
     localStorage.setItem("all_tasks", JSON.stringify(updatedTasks));
+  };
+
+  const handleFilterByPriority = (input) => {
+    setFilterValue(input);
   };
 
   return (
@@ -86,7 +97,11 @@ function TasksProvider({ children }) {
         handleCancelForm,
         handleChangeStatus,
         handleDragStart,
-        handleDrop
+        handleDrop,
+        searchText,
+        handleSearchByTitle,
+        handleFilterByPriority,
+        filterValue,
       }}
     >
       {children}

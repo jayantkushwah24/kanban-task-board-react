@@ -8,7 +8,7 @@ const AddTask = () => {
     defaultValues: taskToEdit ?? {
       title: "",
       description: "",
-      priority: "expedite",
+      priority: "urgent",
       status: "todo",
       due_date: "",
     },
@@ -36,8 +36,8 @@ const AddTask = () => {
         <label htmlFor="priority" id="priority">
           Priority:{" "}
         </label>
-        <select {...register("priority")} name="priority" id="">
-          <option value="expedite">Expedite</option>
+        <select {...register("priority")} name="priority" id="priority">
+          <option value="urgent">Urgent</option>
           <option value="normal">Normal Priority</option>
           <option value="not-critical">Not Critical</option>
           <option value="low">Low Priority</option>
