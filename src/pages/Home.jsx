@@ -4,7 +4,7 @@ import TaskCard from "../components/TaskCard";
 import { TasksContext } from "../context/TaskContext";
 
 const Home = () => {
-  const { showAddTaskForm, handleStartAddTask, handleCancelForm } =
+  const { showAddTaskForm, handleStartAddTask, handleCancelForm, handleDrop } =
     useContext(TasksContext);
 
   return (
@@ -29,13 +29,22 @@ const Home = () => {
         </thead>
         <tbody>
           <tr>
-            <td>
+            <td
+              onDrop={() => handleDrop("todo")}
+              onDragOver={(e) => e.preventDefault()}
+            >
               <TaskCard status="todo" />
             </td>
-            <td>
+            <td
+              onDrop={() => handleDrop("in-progress")}
+              onDragOver={(e) => e.preventDefault()}
+            >
               <TaskCard status="in-progress" />
             </td>
-            <td>
+            <td
+              onDrop={() => handleDrop("completed")}
+              onDragOver={(e) => e.preventDefault()}
+            >
               <TaskCard status="completed" />
             </td>
           </tr>

@@ -8,6 +8,7 @@ function TasksProvider({ children }) {
   );
   const [showAddTaskForm, setShowAddTaskForm] = useState(false);
   const [taskToEdit, setTaskToEdit] = useState(null);
+  const [dragTaskId, setDragTaskId] = useState(null);
 
   const handleFormSubmit = (data) => {
     const updatedTasks = taskToEdit
@@ -46,6 +47,30 @@ function TasksProvider({ children }) {
     setTaskToEdit(null);
   };
 
+  const handleDragStart = (id) => {
+    setDragTaskId(id);
+  };
+
+  const handleDrop = (newStatus) => {
+    if (!dragTaskId) return;
+
+    const updatedTasks = allTasks.map((task) =>
+      task.id === dragTaskId ? { ...task, status: newStatus } : task,
+    );
+
+    setAllTasks(updatedTasks);
+    localStorage.setItem("all_tasks", JSON.stringify(updatedTasks));
+  };
+
+  const handleChangeStatus = (id, newStatus) => {
+    if (!newStatus) return;
+    const updatedTasks = allTasks.map((task) =>
+      task.id === id ? { ...task, status: newStatus } : task,
+    );
+    setAllTasks(updatedTasks);
+    localStorage.setItem("all_tasks", JSON.stringify(updatedTasks));
+  };
+
   return (
     <TasksContext.Provider
       value={{
@@ -59,6 +84,9 @@ function TasksProvider({ children }) {
         handleUpdateTask,
         handleStartAddTask,
         handleCancelForm,
+        handleChangeStatus,
+        handleDragStart,
+        handleDrop
       }}
     >
       {children}
