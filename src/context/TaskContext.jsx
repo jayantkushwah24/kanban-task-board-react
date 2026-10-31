@@ -1,34 +1,44 @@
-import { createContext, useState } from "react";
+import { useState } from "react";
+import { TasksContext } from "./TasksContext";
+import {
+  createOrUpdateTask,
+  removeTaskById,
+  updateTaskStatus,
+} from "../utils/taskHelpers";
 
-export const TasksContext = createContext();
+function getStoredTasks() {
+  try {
+    const storedTasks = JSON.parse(localStorage.getItem("all_tasks") ?? "[]");
+    return Array.isArray(storedTasks)
+      ? storedTasks.flat(Infinity).filter((task) => task && typeof task === "object")
+      : [];
+  } catch (error) {
+    console.error("Unable to load saved tasks from local storage.", error);
+    return [];
+  }
+}
 
 function TasksProvider({ children }) {
-  const [allTasks, setAllTasks] = useState(
-    JSON.parse(localStorage.getItem("all_tasks")) || [],
-  );
+  const [allTasks, setAllTasks] = useState(getStoredTasks);
   const [showAddTaskForm, setShowAddTaskForm] = useState(false);
   const [taskToEdit, setTaskToEdit] = useState(null);
   const [dragTaskId, setDragTaskId] = useState(null);
   const [searchText, setSearchText] = useState("");
   const [filterValue, setFilterValue] = useState("");
 
-  const handleFormSubmit = (data) => {
-    const updatedTasks = taskToEdit
-      ? allTasks.map((task) =>
-          task.id === taskToEdit.id ? { ...task, ...data } : task,
-        )
-      : [...allTasks, { ...data, id: crypto.randomUUID() }];
+  const saveTasks = (tasks) => {
+    localStorage.setItem("all_tasks", JSON.stringify(tasks));
+    setAllTasks(tasks);
+  };
 
-    localStorage.setItem("all_tasks", JSON.stringify(updatedTasks));
-    setAllTasks(updatedTasks);
+  const handleFormSubmit = (data) => {
+    saveTasks(createOrUpdateTask(allTasks, data, taskToEdit));
     setShowAddTaskForm(false);
     setTaskToEdit(null);
   };
 
   const handleDeleteTask = (id) => {
-    const data = allTasks.filter((task) => task.id !== id);
-    setAllTasks(data);
-    localStorage.setItem("all_tasks", JSON.stringify(data));
+    saveTasks(removeTaskById(allTasks, id));
   };
 
   const handleUpdateTask = (id) => {
@@ -50,7 +60,12 @@ function TasksProvider({ children }) {
   };
 
   const handleDragStart = (id) => {
+    if (!allTasks.some((task) => task.id === id)) return;
     setDragTaskId(id);
+  };
+
+  const handleDragEnd = () => {
+    setDragTaskId(null);
   };
 
   const handleSearchByTitle = (input) => {
@@ -58,24 +73,16 @@ function TasksProvider({ children }) {
   };
 
   const handleDrop = (newStatus) => {
-    if (!dragTaskId) return;
-
-    const updatedTasks = allTasks.map((task) =>
-      task.id === dragTaskId ? { ...task, status: newStatus } : task,
-    );
-
-    setAllTasks(updatedTasks);
-    localStorage.setItem("all_tasks", JSON.stringify(updatedTasks));
+    const taskId = dragTaskId;
     setDragTaskId(null);
+    if (!taskId) return;
+
+    handleChangeStatus(taskId, newStatus);
   };
 
   const handleChangeStatus = (id, newStatus) => {
-    if (!newStatus) return;
-    const updatedTasks = allTasks.map((task) =>
-      task.id === id ? { ...task, status: newStatus } : task,
-    );
-    setAllTasks(updatedTasks);
-    localStorage.setItem("all_tasks", JSON.stringify(updatedTasks));
+    const updatedTasks = updateTaskStatus(allTasks, id, newStatus);
+    if (updatedTasks !== allTasks) saveTasks(updatedTasks);
   };
 
   const handleFilterByPriority = (input) => {
@@ -86,7 +93,6 @@ function TasksProvider({ children }) {
     <TasksContext.Provider
       value={{
         allTasks,
-        setAllTasks,
         showAddTaskForm,
         setShowAddTaskForm,
         taskToEdit,
@@ -97,6 +103,7 @@ function TasksProvider({ children }) {
         handleCancelForm,
         handleChangeStatus,
         handleDragStart,
+        handleDragEnd,
         handleDrop,
         searchText,
         handleSearchByTitle,
